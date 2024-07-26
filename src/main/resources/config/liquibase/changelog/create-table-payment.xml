@@ -1,0 +1,35 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <property name="primary_seq" value="payment_primary_sequence" />
+
+    <changeSet id="create-payment-primary-sequence" author="vazhenin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="${primary_seq}"/>
+            </not>
+        </preConditions>
+        <createSequence sequenceName="${primary_seq}" startValue="1" incrementBy="1" />
+    </changeSet>
+
+    <changeSet id="create-payment-table" author="vazhenin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="payment"/>
+            </not>
+        </preConditions>
+        <createTable tableName="payment">
+            <column name="id" type="bigint" autoIncrement="true" valueSequenceNext="${primary_seq}">
+                <constraints primaryKey="true" primaryKeyName="payment-id-pk"/>
+            </column>
+            <column name="name" type="java.lang.String" />
+            <column name="amount" type="bigint" />
+            <column name="payment_date" type="timestamp" />
+            <column name="employee_id" type="bigint">
+                <constraints foreignKeyName="employee-fk" referencedTableName="employee" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

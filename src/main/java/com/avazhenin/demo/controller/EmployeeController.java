@@ -4,12 +4,14 @@ import com.avazhenin.demo.dto.EmployeeDTO;
 import com.avazhenin.demo.service.EmployeeService;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
 @RestController
+@PreAuthorize("hasRole('user')")
 @RequestMapping("/employee")
 public class EmployeeController {
     Logger log = Logger.getLogger(EmployeeController.class);

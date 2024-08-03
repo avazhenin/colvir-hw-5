@@ -1,0 +1,49 @@
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                   http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <property name="primary_seq" value="employee_primary_sequence" />
+
+    <changeSet id="create-employee_primary_sequence" author="vazhenin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <sequenceExists sequenceName="${primary_seq}" />
+            </not>
+        </preConditions>
+        <createSequence sequenceName="${primary_seq}" startValue="1" incrementBy="1" />
+    </changeSet>
+
+    <changeSet id="create-employee-table" author="vazhenin">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="employee" />
+            </not>
+        </preConditions>
+        <createTable tableName="employee">
+            <column name="id" type="bigint" autoIncrement="true" valueSequenceNext="${primary_seq}">
+                <constraints primaryKeyName="employee-id-pk" primaryKey="true"/>
+            </column>
+            <column name="name" type="java.lang.String" />
+            <column name="surname" type="java.lang.String" />
+            <column name="salary" type="bigint" />
+            <column name="department_dto_id" type="bigint">
+                <constraints foreignKeyName="department_dto_fk" referencedTableName="department" referencedColumnNames="id"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="add-employee-anatoliy" author="avazhenin">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">
+                select count(*) from employee where name='vazhenin'
+            </sqlCheck>
+        </preConditions>
+        <insert tableName="employee">
+            <column name="id"  valueComputed="nextval('${primary_seq}')"/>
+            <column name="name">vazhenin</column>
+            <column name="salary">999999999</column>
+            <column name="surname">v</column>
+            <column name="department_dto_id" valueComputed="(select id from department where name = 'Almaty')" />
+        </insert>
+    </changeSet>
+</databaseChangeLog>
